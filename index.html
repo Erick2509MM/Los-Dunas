@@ -95,3 +95,42 @@
 
   <footer>
     ¿Servidor apagado? <a href="https://freemcserver.net/server/1738527" target="_blank">Haz clic aquí para activarlo</a>
+  </footer>
+
+  <script>
+    const serverIP = "rabbit.fi.freemcserver.net";
+    const port = "30674";
+    const statusEl = document.getElementById("status");
+    const infoEl = document.getElementById("info");
+
+    async function updateStatus() {
+      try {
+        const res = await fetch(`https://api.mcsrvstat.us/2/${serverIP}:${port}`);
+        const data = await res.json();
+
+        if (data.online) {
+          statusEl.innerHTML = `🟢 En línea`;
+          statusEl.className = "status online";
+          infoEl.innerHTML = `
+            <p><strong>IP:</strong> ${serverIP}</p>
+            <p><strong>Puerto:</strong> ${port}</p>
+            <p><strong>Jugadores:</strong> ${data.players.online} / ${data.players.max}</p>
+            <p><strong>Desde:</strong> ${new Date(data.debug.cachetime * 1000).toLocaleTimeString()}</p>
+          `;
+        } else {
+          statusEl.innerHTML = `🔴 Fuera de línea`;
+          statusEl.className = "status offline";
+          infoEl.innerHTML = `<p>Servidor no disponible en este momento.</p>`;
+        }
+      } catch (err) {
+        statusEl.innerHTML = `⚠️ Error al consultar`;
+        statusEl.className = "status offline";
+        infoEl.innerHTML = `<p>Revisa tu conexión o inténtalo luego.</p>`;
+      }
+    }
+
+    updateStatus();
+    setInterval(updateStatus, 10000);
+  </script>
+</body>
+</html>
