@@ -3,91 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Estado del Servidor | Los Dunas</title>
-  <link rel="icon" type="image/png" href="favicon.png" />
+  <title>Servidor Los Dunas</title>
+  <link rel="icon" href="favicon.png" type="image/png" />
   <style>
+    :root {
+      --bg: #0e0e10;
+      --text: #eaeaea;
+      --card: #1a1a1d;
+      --accent: #00ffc3;
+      --danger: #ff4e4e;
+      --success: #4cff7a;
+      --border: #2d2d2d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background-color: #121212;
-      color: #e0e0e0;
-      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem;
+      padding: 3rem 1rem;
+      min-height: 100vh;
     }
 
     h1 {
-      color: #00ffcc;
-    }
-
-    .status {
-      margin-top: 2rem;
-      padding: 1rem 2rem;
-      border: 1px solid #333;
-      border-radius: 10px;
-      background-color: #1e1e1e;
-      width: 100%;
-      max-width: 500px;
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
       text-align: center;
     }
 
+    .card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 255, 195, 0.1);
+    }
+
+    .status {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
     .online {
-      color: #00ff00;
+      color: var(--success);
     }
 
     .offline {
-      color: #ff4444;
+      color: var(--danger);
+    }
+
+    .info {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
     }
 
     a {
-      color: #00ccff;
+      color: var(--accent);
       text-decoration: none;
     }
 
     a:hover {
       text-decoration: underline;
     }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      color: #888;
+    }
   </style>
 </head>
 <body>
   <h1>🌍 Servidor Los Dunas</h1>
-  <div class="status" id="status">
-    Consultando estado del servidor...
+  <div class="card">
+    <div class="status" id="status">⏳ Consultando estado...</div>
+    <div class="info" id="info"></div>
   </div>
-  <br />
-  <p>
-    ¿Apagado? <a href="https://freemcserver.net/server/1738527" target="_blank">Renovar / Activar</a>
-  </p>
 
-  <script>
-    const statusDiv = document.getElementById("status");
-    const serverIP = "rabbit.fi.freemcserver.net";
-    const port = "30674";
-
-    async function checkServerStatus() {
-      try {
-        const res = await fetch(`https://api.mcsrvstat.us/2/${serverIP}:${port}`);
-        const data = await res.json();
-
-        if (data.online) {
-          statusDiv.innerHTML = `
-            <p class="online">🟢 ¡Servidor en línea!</p>
-            <p><strong>IP:</strong> ${serverIP}</p>
-            <p><strong>Puerto:</strong> ${port}</p>
-            <p><strong>Jugadores:</strong> ${data.players.online} / ${data.players.max}</p>
-            <p><strong>Activo desde:</strong> ${new Date(data.debug.cachetime * 1000).toLocaleTimeString()}</p>
-          `;
-        } else {
-          statusDiv.innerHTML = `<p class="offline">🔴 Servidor desconectado</p>`;
-        }
-      } catch (error) {
-        statusDiv.innerHTML = `<p class="offline">⚠️ Error al consultar el estado</p>`;
-        console.error(error);
-      }
-    }
-
-    checkServerStatus(); // Inicial
-    setInterval(checkServerStatus, 10000); // Cada 10 segundos
-  </script>
-</body>
-</html>
+  <footer>
+    ¿Servidor apagado? <a href="https://freemcserver.net/server/1738527" target="_blank">Haz clic aquí para activarlo</a>
