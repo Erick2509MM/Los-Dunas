@@ -3,85 +3,91 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Estado del Servidor Minecraft</title>
+  <title>Estado del Servidor | Los Dunas</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <style>
     body {
       background-color: #121212;
-      color: #f0f0f0;
-      font-family: 'Segoe UI', sans-serif;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-    .card {
-      background-color: #1e1e1e;
       padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      text-align: center;
-      max-width: 400px;
-      width: 100%;
     }
+
+    h1 {
+      color: #00ffcc;
+    }
+
     .status {
-      font-size: 1.2rem;
-      margin: 1rem 0;
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      border: 1px solid #333;
+      border-radius: 10px;
+      background-color: #1e1e1e;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
     }
+
     .online {
-      color: #4caf50;
+      color: #00ff00;
     }
+
     .offline {
-      color: #f44336;
+      color: #ff4444;
     }
-    a.button {
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 0.8rem 1.5rem;
-      background-color: #3b82f6;
-      color: white;
+
+    a {
+      color: #00ccff;
       text-decoration: none;
-      border-radius: 8px;
-      transition: background 0.3s;
     }
-    a.button:hover {
-      background-color: #2563eb;
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🌍 Servidor de Minecraft</h1>
-    <h2>Los Dunas</h2>
-    <p><strong>IP:</strong> rabbit.fi.freemcserver.net</p>
-    <p><strong>Puerto:</strong> 30674</p>
-    <div class="status" id="status">Consultando estado...</div>
-    <div id="players"></div>
-    <p>¿El servidor está apagado? Puede ser que haya que renovarlo.</p>
-  
-    <a href="https://freemcserver.net/server/1738527" target="_blank" class="button">🔄 Renovar o activar servidor</a>
+  <h1>🌍 Servidor Los Dunas</h1>
+  <div class="status" id="status">
+    Consultando estado del servidor...
   </div>
+  <br />
+  <p>
+    ¿Apagado? <a href="https://freemcserver.net/server/1738527" target="_blank">Renovar / Activar</a>
+  </p>
 
   <script>
-    fetch('https://api.mcsrvstat.us/2/rabbit.fi.freemcserver.net:30674')
-      .then(res => res.json())
-      .then(data => {
-        const statusDiv = document.getElementById('status');
-        const playersDiv = document.getElementById('players');
+    const statusDiv = document.getElementById("status");
+    const serverIP = "rabbit.fi.freemcserver.net";
+    const port = "30674";
+
+    async function checkServerStatus() {
+      try {
+        const res = await fetch(`https://api.mcsrvstat.us/2/${serverIP}:${port}`);
+        const data = await res.json();
 
         if (data.online) {
-          statusDiv.innerHTML = '🟢 <span class="online">En línea</span>';
-          playersDiv.textContent = `👥 Jugadores: ${data.players.online} / ${data.players.max}`;
+          statusDiv.innerHTML = `
+            <p class="online">🟢 ¡Servidor en línea!</p>
+            <p><strong>IP:</strong> ${serverIP}</p>
+            <p><strong>Puerto:</strong> ${port}</p>
+            <p><strong>Jugadores:</strong> ${data.players.online} / ${data.players.max}</p>
+            <p><strong>Activo desde:</strong> ${new Date(data.debug.cachetime * 1000).toLocaleTimeString()}</p>
+          `;
         } else {
-          statusDiv.innerHTML = '🔴 <span class="offline">Apagado</span>';
-          playersDiv.textContent = '';
+          statusDiv.innerHTML = `<p class="offline">🔴 Servidor desconectado</p>`;
         }
-      })
-      .catch(err => {
-        document.getElementById('status').innerHTML = '⚠️ Error al consultar el estado';
-        console.error(err);
-      });
+      } catch (error) {
+        statusDiv.innerHTML = `<p class="offline">⚠️ Error al consultar el estado</p>`;
+        console.error(error);
+      }
+    }
+
+    checkServerStatus(); // Inicial
+    setInterval(checkServerStatus, 10000); // Cada 10 segundos
   </script>
 </body>
 </html>
