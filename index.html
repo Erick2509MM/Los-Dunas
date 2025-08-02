@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estado del Servidor Minecraft</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <style>
+    body {
+      background-color: #121212;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    .status {
+      font-size: 1.2rem;
+      margin: 1rem 0;
+    }
+    .online {
+      color: #4caf50;
+    }
+    .offline {
+      color: #f44336;
+    }
+    a.button {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      background-color: #3b82f6;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    a.button:hover {
+      background-color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🌍 Servidor de Minecraft</h1>
+    <h2>Los Dunas</h2>
+    <p><strong>IP:</strong> rabbit.fi.freemcserver.net</p>
+    <p><strong>Puerto:</strong> 30674</p>
+    <div class="status" id="status">Consultando estado...</div>
+    <div id="players"></div>
+    <p>¿El servidor está apagado? Puede ser que haya que renovarlo.</p>
+  
+    <a href="https://freemcserver.net/server/1738527" target="_blank" class="button">🔄 Renovar o activar servidor</a>
+  </div>
+
+  <script>
+    fetch('https://api.mcsrvstat.us/2/rabbit.fi.freemcserver.net:30674')
+      .then(res => res.json())
+      .then(data => {
+        const statusDiv = document.getElementById('status');
+        const playersDiv = document.getElementById('players');
+
+        if (data.online) {
+          statusDiv.innerHTML = '🟢 <span class="online">En línea</span>';
+          playersDiv.textContent = `👥 Jugadores: ${data.players.online} / ${data.players.max}`;
+        } else {
+          statusDiv.innerHTML = '🔴 <span class="offline">Apagado</span>';
+          playersDiv.textContent = '';
+        }
+      })
+      .catch(err => {
+        document.getElementById('status').innerHTML = '⚠️ Error al consultar el estado';
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
